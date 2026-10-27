@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sen ushın arnayı ✨</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Suzuvchi yuraklar foni */
+        .heart-bg {
+            position: absolute;
+            top: -10vh;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            animation: fall 6s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+            }
+        }
+
+        /* Asosiy karta */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(220, 53, 69, 0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            color: #d63384;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .highlight {
+            color: #d63384;
+            font-weight: 600;
+        }
+
+        /* Tugmalar o'rni */
+        .buttons-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            min-height: 60px;
+            position: relative;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-yes {
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            color: white;
+        }
+
+        .btn-yes:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-no {
+            background: #e0e0e0;
+            color: #666;
+            position: absolute;
+            right: 20%;
+        }
+
+        /* Yutuq oynasi */
+        .success-screen {
+            display: none;
+        }
+
+        .success-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #ff416c;
+            margin-bottom: 15px;
+        }
+
+        .big-heart {
+            font-size: 5rem;
+            animation: pulse 1.2s infinite;
+            margin: 20px 0;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Asosiy Kontent -->
+    <div class="card" id="mainCard">
+        <h1 class="title">Meniń Júregimdegi Insan... ✨</h1>
+        <p class="message">
+            Ómirime kirip kelgelli beri ómirimniń hár bir kúni quwanıshqa hám mazmunlı boldı. <br>
+            Seniń kúlkiń men ushın dúnyadaǵı eń sulıw kórinis. ❤️ <br><br>
+            <span class="highlight">Meni keshire alasın ba, Muxabbatım?</span>
+        </p>
+
+        <div class="buttons-wrapper" id="btnGroup">
+            <button class="btn btn-yes" onclick="celebrate()">Awa, álbette ❤️</button>
+            <button class="btn btn-no" id="noBtn" onmouseover="moveButton()">Yaq 😜</button>
+        </div>
+    </div>
+
+    <!-- Natija Oynasi -->
+    <div class="card success-screen" id="successCard">
+        <div class="big-heart">💖</div>
+        <h1 class="success-title">Raxmet, Janım!</h1>
+        <p class="message">
+            Seniń "AWA" degen juwabıń men ushın eń úlken baxıt! <br>
+            Sen menen birge hár bir sekund quwanıshlı boladı. Men seni qattı jaqsı kóremen, Sanduǵashım! 🥰✨
+        </p>
+    </div>
+
+    <script>
+        // Suzuvchi yurakchalarni yaratish
+        function createHearts() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+            heart.style.fontSize = Math.random() * 15 + 15 + 'px';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
+        }
+
+        setInterval(createHearts, 300);
+
+        // "Yo'q" tugmasining qochib ketishi
+        function moveButton() {
+            const noBtn = document.getElementById('noBtn');
+            const x = Math.random() * (window.innerWidth - 120) - (window.innerWidth / 2 - 60);
+            const y = Math.random() * (window.innerHeight - 60) - (window.innerHeight / 2 - 30);
+            
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // "Ha" tugmasi bosilganda konfetti va xabar
+        function celebrate() {
+            document.getElementById('mainCard').style.display = 'none';
+            document.getElementById('successCard').style.display = 'block';
+
+            // Konfetti otilishi
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
+        }
+    </script>
+</body>
+</html>
